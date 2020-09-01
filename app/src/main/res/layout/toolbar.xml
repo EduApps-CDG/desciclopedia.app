@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/TOOLBAR_WIDTH"
+    android:background="@color/colorAccent">
+
+    <ImageView
+        android:layout_width="@dimen/TOOLBAR_WIDTH"
+        android:layout_height="@dimen/TOOLBAR_WIDTH"
+        android:padding="10dp"
+        android:id="@+id/MENU_HAMBURGUER"/>
+
+    <TextView
+        android:id="@+id/TITLE"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="@string/app_name"
+        android:gravity="center_vertical"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+
+    <ImageView
+        android:layout_width="@dimen/TOOLBAR_WIDTH"
+        android:layout_height="@dimen/TOOLBAR_WIDTH"
+        android:padding="10dp"
+        android:src="@drawable/baseline_edit_black_48"
+        android:id="@+id/ACTION_BUTTON"/>
+
+</LinearLayout>
