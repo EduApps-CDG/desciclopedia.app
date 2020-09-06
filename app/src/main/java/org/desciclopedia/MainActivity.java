@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         new Thread() {
             @Override
             public void run() {
-                Global.CONTENT = Linux.curl(null,"https://desciclopedia.org/index.php?title=Desciclop%C3%A9dia&action=raw");
+                Global.CONTENT = Linux.curl(null,WikiHelper.internal(null));
 
                 System.out.println(Global.CONTENT);
 
@@ -66,5 +66,6 @@ public class MainActivity extends AppCompatActivity {
         new File(Global.FILES + "Forum").mkdir();
         new File(Global.FILES + "Regra").mkdir();
         new File(Global.FILES + "Desnotícias").mkdir();
+        new File(Global.FILES + "Predefinição").mkdir();
     }
 }

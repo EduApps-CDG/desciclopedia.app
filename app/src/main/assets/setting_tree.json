@@ -1,0 +1,96 @@
+{
+  "Configurações": {
+    "type": "layer",
+
+    "Notificações": {
+      "type": "layer",
+
+      "Vibração": {
+        "type": "category"
+      },
+
+      "Vibrar": {
+        "type": "checkbox",
+        "description": "Vibrar ao receber notificações."
+      },
+
+      "Padrão de Vibração": {
+        "type": "activity",
+        "description": "{ 100, 200, 300, 400, 500, 400, 300, 200, 400, 000 }"
+      },
+
+      "Som": {
+        "type": "category"
+      },
+
+      "Tocar som": {
+        "type": "checkbox",
+        "description": "Tocar som ao receber notificações."
+      },
+
+      "Escolher som de Notificação": {
+        "type": "file"
+      },
+
+      "LED": {
+        "type": "category"
+      },
+
+      "Usar LED Como Notificação": {
+        "type": "checkbox"
+      }
+    },
+
+    "Interface de Usuário": {
+      "type": "layer",
+
+      "Temas": {
+        "type": "category"
+      },
+
+      "Tema Padrão": {
+        "type": "radio",
+        "description": "Ativar o Tema Padrão."
+      },
+
+      "Tema Dark": {
+        "type": "radio",
+        "description": "Ativar o Tema Dark."
+      },
+
+      "Tema AMOLED": {
+        "type": "radio",
+        "description": "Ativar o Tema AMOLED."
+      },
+
+      "Tema Personalizado": {
+        "type": "radio",
+        "description": "Ativar o Tema Personalizado (Avançado)."
+      },
+
+      "Avançado": {
+        "type": "category"
+      },
+
+      "Cor Primária": {
+        "type": "color"
+      },
+
+      "Cor Secundária": {
+        "type": "color"
+      },
+
+      "Cor de Fundo": {
+        "type": "color"
+      }
+    },
+
+    "Sobre": {
+      "type": "about"
+    },
+
+    "Versão": {
+      "type": "egg"
+    }
+  }
+}

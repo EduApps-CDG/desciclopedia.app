@@ -2,6 +2,8 @@ package org.desciclopedia;
 
 import android.graphics.Bitmap;
 
+import androidx.annotation.Nullable;
+
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 
@@ -25,8 +27,12 @@ public class WikiHelper {
         return result.split("<div id=\"mw-navigation\">")[0];
     }
 
-    public static String internal(String wikipage) {
-        return Global.DOMAIN + "wiki/" + wikipage;
+    public static String internal(@Nullable String wikipage) {
+        //https://desciclopedia.org/index.php?title=Desciclop%C3%A9dia&action=raw
+        if (wikipage == null) {
+            wikipage = "";
+        }
+        return Global.DOMAIN + "index.php?title=" + wikipage + "&feed=atom&action=raw";
     }
 
     public static boolean isCached(String wikipage) {
@@ -55,10 +61,12 @@ public class WikiHelper {
         try {
         String nome = url.split("/")[url.split("/").length - 1];
         if (new File(Global.FILES + "Arquivo/" + nome).exists()) {
-            return Picasso.get().load("file:///" + Global.FILES + "Arquivo/" + nome).get();
+            return Picasso.get().load(deUrlize("file:///" + Global.FILES + "Arquivo/" + nome)).get();
         } else {
-            Linux.curl(new String[]{"-o " + Global.FILES + "Arquivo/" + nome}, url);
-                return Picasso.get().load("file:///" + Global.FILES + "Arquivo/" + nome).get();
+            Linux.curl(new String[]{
+                    "-o " + Global.FILES + "Arquivo/" + deUrlizeCURL(nome)
+            }, url);
+            return Picasso.get().load("file:///" + Global.FILES + "Arquivo/" + deUrlize(nome)).get();
         }
         } catch (IOException e) {
             e.printStackTrace();
@@ -77,5 +85,47 @@ public class WikiHelper {
             e.printStackTrace();
             return "http://images.uncyc.org/pt/4/49/Error.png";
         }
+    }
+
+    public static String deUrlize(String url) {
+        return url.replaceAll("%C3%A9","é")
+                  .replaceAll("%C3%A1","á")
+                  .replaceAll("%C3%AD","í")
+                  .replaceAll("%C3%B3","ó")
+                  .replaceAll("%C3%BA","ú")
+                  .replaceAll("%C3%A3","ã")
+                  .replaceAll("%C3%B5","õ")
+                  .replaceAll("%C3%A0","à")
+                  .replaceAll("%C3%A8","è")
+                  .replaceAll("%C3%AC","ì")
+                  .replaceAll("%C3%B2","ò")
+                  .replaceAll("%C3%B9","ù")
+                  .replaceAll("%C3%A2","â")
+                  .replaceAll("%C3%AA","ê")
+                  .replaceAll("%C3%AE","î")
+                  .replaceAll("%C3%B4","ô")
+                  .replaceAll("%C3%BB","û")
+                  .replaceAll("_"," ");
+    }
+
+    public static String deUrlizeCURL(String url) {
+        return url.replaceAll("%C3%A9","\\\\é")
+                .replaceAll("%C3%A1","\\\\á")
+                .replaceAll("%C3%AD","\\\\í")
+                .replaceAll("%C3%B3","\\\\ó")
+                .replaceAll("%C3%BA","\\\\ú")
+                .replaceAll("%C3%A3","\\\\ã")
+                .replaceAll("%C3%B5","\\\\õ")
+                .replaceAll("%C3%A0","\\\\à")
+                .replaceAll("%C3%A8","\\\\è")
+                .replaceAll("%C3%AC","\\\\ì")
+                .replaceAll("%C3%B2","\\\\ò")
+                .replaceAll("%C3%B9","\\\\ù")
+                .replaceAll("%C3%A2","\\\\â")
+                .replaceAll("%C3%AA","\\\\ê")
+                .replaceAll("%C3%AE","\\\\î")
+                .replaceAll("%C3%B4","\\\\ô")
+                .replaceAll("%C3%BB","\\\\û")
+                .replaceAll("_","\\\\ ");
     }
 }
