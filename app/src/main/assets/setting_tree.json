@@ -85,6 +85,10 @@
       }
     },
 
+    "Fazer o Login": {
+      "type": "login"
+    },
+
     "Sobre": {
       "type": "about"
     },

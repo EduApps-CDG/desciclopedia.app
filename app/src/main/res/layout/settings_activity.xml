@@ -25,12 +25,12 @@
         android:layout_height="match_parent"
         android:fillViewport="true">
 
-        <LinearLayout
+        <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:id="@+id/settings">
+            android:id="@+id/SETTING_LIST">
 
-        </LinearLayout>
+        </ListView>
     </ScrollView>
 </LinearLayout>

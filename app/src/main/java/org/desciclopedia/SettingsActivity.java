@@ -5,6 +5,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
@@ -15,12 +17,16 @@ import androidx.fragment.app.FragmentManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
     public int profundity = 0;
     ImageView HAMBURGUER_MENU;
     ImageView ACTION;
     TextView TITLE;
+    ListView LIST;
     JSONObject json;
+    ArrayList<SettingsItem> LIST_VALUES = new ArrayList<SettingsItem>();
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,15 +35,14 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         HAMBURGUER_MENU = findViewById(R.id.MENU_HAMBURGUER);
         ACTION = findViewById(R.id.ACTION_BUTTON);
         TITLE = findViewById(R.id.TITLE);
-        try {
-            json = new JSONObject(SettingsHelper.getSettings(this));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        LIST = findViewById(R.id.SETTING_LIST);
+
+        postSettings();
 
         TITLE.setText("Configurações");
         HAMBURGUER_MENU.setImageResource(R.drawable.ic_action_return);
         ACTION.setImageResource(R.drawable.ic_action_search);
+        LIST.setAdapter(new SettingsAdapter(this,LIST_VALUES));
     }
 
     @Override public void onSaveInstanceState(Bundle outState) {
@@ -67,5 +72,36 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     public void settingSearch() {
 
+    }
+
+    public void postSettings() {
+        try {
+            json = new JSONObject(SettingsHelper.getSettings(this)).getJSONObject("Configurações");
+            ImageView img = new ImageView(this);
+            System.out.println("json lenght" + json.length());
+
+            for (int x = 1; x < (json.length() - 1);x++) {
+
+                String js_tits = json.names().getString(x);
+                JSONObject js_obj = json.getJSONObject(js_tits);
+                String js_desc = "";
+                try {
+                    js_desc = js_obj.getString("description");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                String js_type = js_obj.getString("type");
+
+                if (js_type.equals("login")) {
+                    img.setImageResource(R.drawable.baseline_account_circle_black_48);
+
+                }
+
+                LIST_VALUES.add(new SettingsItem(js_tits,js_desc,js_type,img));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

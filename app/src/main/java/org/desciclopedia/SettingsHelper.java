@@ -20,7 +20,7 @@ public class SettingsHelper {
             String mLine;
             while ((mLine = reader.readLine()) != null) {
                 //process line
-                setting += mLine;
+                setting += mLine + "\n";
             }
         } catch (IOException e) {
             //log the exception

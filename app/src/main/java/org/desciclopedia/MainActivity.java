@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         new Thread() {
             @Override
             public void run() {
-                Global.CONTENT = Linux.curl(null,WikiHelper.internal(null));
+                Global.CONTENT = Linux.curl(null,WikiHelper.internal("Sexo_nasal"));
 
                 System.out.println(Global.CONTENT);
 
@@ -67,5 +67,6 @@ public class MainActivity extends AppCompatActivity {
         new File(Global.FILES + "Regra").mkdir();
         new File(Global.FILES + "Desnotícias").mkdir();
         new File(Global.FILES + "Predefinição").mkdir();
+        new File(Global.FILES + "Especial").mkdir();
     }
 }

@@ -33,6 +33,9 @@
         android:layout_height="match_parent"
         android:layout_marginRight="50dp"
         android:layout_gravity="start"
-        app:headerLayout="@layout/drawer" />
+        app:headerLayout="@layout/drawer">
+
+        <include layout="@layout/drawer"/>
+    </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -33,6 +33,7 @@ public class WikiActivity extends Activity implements View.OnClickListener {
     DrawerArrowDrawable HAMBURGUER_IMAGE;
     DrawerLayout DRAWER;
     LinearLayout CONTENT;
+    NavigationView NAVIGATION;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +47,7 @@ public class WikiActivity extends Activity implements View.OnClickListener {
 
         HAMBURGUER_MENU.setImageDrawable(HAMBURGUER_IMAGE);
         HAMBURGUER_MENU.setOnClickListener(this);
+        SETTINGS.setOnClickListener(this);
 
         String texto = getIntent().getExtras().getString("page");
         String[] linhas = texto.split("\n");
@@ -93,6 +95,14 @@ public class WikiActivity extends Activity implements View.OnClickListener {
 //                if (metadados[1] == "thumb" | metadados[1] == "miniaturadaimagem") {
 //
 //                }
+            } else if (linhas[x].startsWith("<--")) {
+                for(int y = x;y < (linhas.length - 1);y++) {
+                    if (linhas[y].endsWith("-->")) {
+                        x = y;
+                        y = linhas.length;
+                    }
+                }
+
             } else {
                 TextView txt = new TextView(this);
                 txt.setText(linhas[x]);
@@ -121,6 +131,7 @@ public class WikiActivity extends Activity implements View.OnClickListener {
             case R.id.SETTINGS:
                 Intent i = new Intent(this, SettingsActivity.class);
                 startActivity(i);
+                break;
         }
     }
 
