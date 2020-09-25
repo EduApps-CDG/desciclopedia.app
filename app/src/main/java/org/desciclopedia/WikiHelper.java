@@ -5,8 +5,8 @@ import android.graphics.Bitmap;
 import androidx.annotation.Nullable;
 
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.RequestCreator;
 
+import org.desciclopedia.util.Linux;
 import org.intellij.lang.annotations.Language;
 
 import java.io.File;
@@ -14,79 +14,146 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public class WikiHelper {
 
+    /**
+     * Não usado.
+     *
+     * @param page
+     * @return
+     */
+//    public static String getContent(@Language("HTML") String page) {
+//        //TODO: Desfazer a gambiarra.
+//        String result = page.replaceFirst(".*(?=<div id=\"content\" class=\"mw-body\" role=\"main\">)","");
+//        return result.split("<div id=\"mw-navigation\">")[0];
+//    }
 
-    public static String getContent(@Language("HTML") String page) {
-        //TODO: Desfazer a gambiarra.
-        String result = page.replaceFirst(".*(?=<div id=\"content\" class=\"mw-body\" role=\"main\">)","");
-        return result.split("<div id=\"mw-navigation\">")[0];
-    }
-
+    /**
+     * converte [[links]] em links internos (apenas texto). Ex:
+     * https://desciclopedia.org/index.php?title=Desciclopédia&action=raw
+     * é equivalente a [[Desciclopédia]]
+     *
+     * @param wikipage
+     * @return
+     */
     public static String internal(@Nullable String wikipage) {
-        //https://desciclopedia.org/index.php?title=Desciclop%C3%A9dia&action=raw
+        //previne erros (transforma null em "")
         if (wikipage == null) {
             wikipage = "";
         }
+
         return Global.DOMAIN + "index.php?title=" + wikipage + "&feed=atom&action=raw";
     }
 
+    /**
+     * Checa se um artigo está no cache
+     *
+     * @param wikipage
+     * @return
+     */
     public static boolean isCached(String wikipage) {
         File page = new File(Global.FILES + wikipage.replace(":","/") + ".html");
 
         return page.exists();
     }
 
-    public static String load(String url) {
-        try {
-            Request request = new Request.Builder()
-                    .url(url)
-                    .build();
-            Response response = Global.CLIENT.newCall(request).execute();
-            while (!response.isSuccessful()) {
-                // O NADA TB;
-            }
-            return response.body().string();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return Arrays.toString(e.getStackTrace());
-        }
-    }
+    /**
+     * Tentativa falha de baixar o conteúdo da DP
+     *
+     * @TODO: Remover completamente do código (substituir por Linux.curl())
+     *
+     * @param url
+     * @return
+     */
+//    public static String load(String url) {
+//        try {
+//            Request request = new Request.Builder()
+//                    .url(url)
+//                    .build();
+//            Response response = Global.CLIENT.newCall(request).execute();
+//            while (!response.isSuccessful()) {
+//                // O NADA TB;
+//            }
+//            return response.body().string();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return Arrays.toString(e.getStackTrace());
+//        }
+//    }
 
+    /**
+     * baixa uma imagem e manda para o cache
+     *
+     * @param url
+     * @return
+     */
     public static Bitmap loadImage(String url) {
         try {
-        String nome = url.split("/")[url.split("/").length - 1];
-        if (new File(Global.FILES + "Arquivo/" + nome).exists()) {
-            return Picasso.get().load(deUrlize("file:///" + Global.FILES + "Arquivo/" + nome)).get();
-        } else {
-            Linux.curl(new String[]{
-                    "-o " + Global.FILES + "Arquivo/" + deUrlizeCURL(nome)
-            }, url);
-            return Picasso.get().load("file:///" + Global.FILES + "Arquivo/" + deUrlize(nome)).get();
-        }
+            //pega o nome da imagem com extensão
+            String nome = url.split("/")[url.split("/").length - 1];
+
+            //se o arquivo já tiver cache:
+            if (new File(Global.FILES + "Arquivo/" + nome).exists()) {
+                // apenas retorna o arquivo
+                return Picasso.get().load(deUrlize("file:///" + Global.FILES + "Arquivo/" + nome)).get();
+            } else { //se não...
+                //baixa o arquivo no cache:
+                Linux.curl(new String[]{
+                        "-o " + Global.FILES + "Arquivo/" + deUrlizeCURL(nome)
+                }, url);
+
+                //retorna o arquivo:
+                return Picasso.get().load("file:///" + Global.FILES + "Arquivo/" + deUrlize(nome)).get();
+            }
         } catch (IOException e) {
+            //caso algo aconteça
             e.printStackTrace();
             return null;
         }
     }
 
+    /**
+     * pega a url de uma imagem por meio de gambiarras,
+     * na qual consiste em achar a tag <img> no código fonte
+     * da Desciclopédia
+     *
+     * @param code
+     * @return
+     */
     public static String getImageUrlByGambiarra(String code) {
         try {
-            //TODO: Desfazer a gambiarra.
+            //TODO: (Opcional) Desfazer a gambiarra.
+
+            /**
+             * procura o padrão de código de arquivos da Desciclopédia
+             * na qual todas as paginas de prefixo "Arquivo" tem.
+             */
             String result = code.split(Pattern.quote("<div class=\"fullMedia\">"))[1].replaceFirst(Pattern.quote("<a href=\"//"), "").split(Pattern.quote("\""))[0];
+
+            //teste: imprime a url da imagem no console
             System.out.println(result);
+
+            //retorna o url da imagem:
             return "https://" + result;
         } catch (ArrayIndexOutOfBoundsException e) {
+            //caso aconteça um erro...
             System.out.println(code);
             e.printStackTrace();
-            return "http://images.uncyc.org/pt/4/49/Error.png";
+
+            //retorna uma imagem especial (que eu fiz pro app)
+            return "https://images.uncyc.org/pt/4/49/Error.png";
         }
     }
 
+    /**
+     * Decodifica a url. Ex: "%C3%A9" se torna "é" (algumas imagens não funcionam sem isso)
+     *
+     * @param url
+     * @return
+     */
     public static String deUrlize(String url) {
         return url.replaceAll("%C3%A9","é")
                   .replaceAll("%C3%A1","á")
@@ -108,6 +175,12 @@ public class WikiHelper {
                   .replaceAll("_"," ");
     }
 
+    /**
+     * Decodifica a url, mas de uma forma específica para o comando Linux.curl() (note os 4 "\")
+     *
+     * @param url
+     * @return
+     */
     public static String deUrlizeCURL(String url) {
         return url.replaceAll("%C3%A9","\\\\é")
                 .replaceAll("%C3%A1","\\\\á")

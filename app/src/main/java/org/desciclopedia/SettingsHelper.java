@@ -8,7 +8,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ * Classe de ajuda para as configurações dinâmicas
+ */
 public class SettingsHelper {
+    /**
+     * pega o JSON das configurações
+     *
+     * @param act
+     * @return
+     */
     @Language("JSON") public static String getSettings(Activity act) {
         BufferedReader reader = null;
         String setting = "";

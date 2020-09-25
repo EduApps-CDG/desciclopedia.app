@@ -2,6 +2,9 @@ package org.desciclopedia;
 
 import android.view.View;
 
+/**
+ * Não lembro o que essa classe faz. mas são Getters e Setters
+ */
 public class WikiItem {
     private String type;
     private View view;

@@ -19,6 +19,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/**
+ * Atividade de Configurações
+ */
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
     public int profundity = 0;
     ImageView HAMBURGUER_MENU;
@@ -32,17 +35,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity);
 
-        HAMBURGUER_MENU = findViewById(R.id.MENU_HAMBURGUER);
-        ACTION = findViewById(R.id.ACTION_BUTTON);
-        TITLE = findViewById(R.id.TITLE);
-        LIST = findViewById(R.id.SETTING_LIST);
-
         postSettings();
-
-        TITLE.setText("Configurações");
-        HAMBURGUER_MENU.setImageResource(R.drawable.ic_action_return);
-        ACTION.setImageResource(R.drawable.ic_action_search);
-        LIST.setAdapter(new SettingsAdapter(this,LIST_VALUES));
     }
 
     @Override public void onSaveInstanceState(Bundle outState) {
@@ -61,6 +54,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
+    /**
+     * volta um nivel de configuração
+     */
     public void goBack() {
         if (profundity <= 0) {
             this.onDestroy();
@@ -70,10 +66,16 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
+    /**
+     * função para uma futura barra de pesquisa
+     */
     public void settingSearch() {
 
     }
 
+    /**
+     * cria dinamicamente uma lista com todas as configurações
+     */
     public void postSettings() {
         try {
             json = new JSONObject(SettingsHelper.getSettings(this)).getJSONObject("Configurações");
@@ -103,5 +105,21 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * inicia as variáveis
+     */
+    public void setup() {
+        HAMBURGUER_MENU = findViewById(R.id.MENU_HAMBURGUER);
+        ACTION = findViewById(R.id.ACTION_BUTTON);
+        TITLE = findViewById(R.id.TITLE);
+        LIST = findViewById(R.id.SETTING_LIST);
+
+        TITLE.setText("Configurações");
+        HAMBURGUER_MENU.setImageResource(R.drawable.ic_action_return);
+        ACTION.setImageResource(R.drawable.ic_action_search);
+
+        LIST.setAdapter(new SettingsAdapter(this,LIST_VALUES));
     }
 }

@@ -2,6 +2,9 @@ package org.desciclopedia;
 
 import android.view.View;
 
+/**
+ * Getters e Setters para um item nas configurações
+ */
 public class SettingsItem {
     private String title;
     private String description;

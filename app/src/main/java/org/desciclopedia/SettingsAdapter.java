@@ -11,6 +11,9 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+/**
+ * Adaptador de configurações dinamicas (veja o arquivo JSON na pasta assets)
+ */
 public class SettingsAdapter extends ArrayAdapter<SettingsItem> {
     public SettingsAdapter(Context context, ArrayList<SettingsItem> arrayList) {
         super(context, 0, arrayList);
