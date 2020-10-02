@@ -16,6 +16,11 @@ public class Global {
     //o domínio da Desciclopédia
     public static final String DOMAIN = "https://desciclopedia.org/";
 
+    /**
+     * ESQUEMA DE TEMAS:
+     */
+    public static String BG_COLOR = "#CCCCCC";
+
     //o conteúdo do artigo
     public static String CONTENT = "NULL";
 

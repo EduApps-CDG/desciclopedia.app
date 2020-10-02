@@ -48,6 +48,15 @@ public class WikiHelper {
         return Global.DOMAIN + "index.php?title=" + wikipage + "&feed=atom&action=raw";
     }
 
+    public static String internalJS(@Nullable String wikipage) {
+        //previne erros (transforma null em "")
+        if (wikipage == null) {
+            wikipage = "";
+        }
+
+        return Global.DOMAIN + "wiki/" + wikipage;
+    }
+
     /**
      * Checa se um artigo está no cache
      *

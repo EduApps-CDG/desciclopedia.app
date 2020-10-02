@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
      *  elas não existam
      */
     public void criaPastas() {
+        new File(Global.FILES + "../cache").mkdir();
         new File(Global.FILES + "Arquivo").mkdir();
         new File(Global.FILES + "Desciclopédia").mkdir();
         new File(Global.FILES + "Forum").mkdir();
@@ -59,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
      */
     public void checaPrimeiraVez() {
         System.out.println("MainActivity.checaPrimeiraVez() iniciado");
+
+        Global.BG_COLOR = "#CCCCCC";
     }
 
     /**

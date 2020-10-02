@@ -19,4 +19,27 @@ public class NetworkUtils {
     public static void runOnNetworkThread(Runnable r) {
         new Thread(r).start();
     }
+
+    /**
+     * Converte texto wikificado para página em html, onde o código interno será processado melhor
+     *
+     * @param wiki
+     */
+    public static String HTMLize(String wiki) {
+        @Language("HTML") String page = "<!DOCTYPE html>" +
+                "<html>" +
+                    "<head>" +
+                     //    Processor.css +
+                    "</head>" +
+
+                    "<body>" +
+                        "<div id='body'>" +
+                            wiki +
+                        "</div>" +
+                        Processor.js +
+                    "</body>" +
+                "</html>";
+
+        return page;
+    }
 }

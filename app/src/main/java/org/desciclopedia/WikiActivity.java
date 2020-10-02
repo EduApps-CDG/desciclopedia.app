@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,6 +18,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
 
 import org.desciclopedia.util.Linux;
+import org.desciclopedia.util.NetworkUtils;
+
 import static org.desciclopedia.util.NetworkUtils.runOnNetworkThread;
 
 public class WikiActivity extends Activity implements View.OnClickListener {
@@ -45,10 +48,12 @@ public class WikiActivity extends Activity implements View.OnClickListener {
             WikiItem y = wikiList.get(x);
             Log.i("UI Debug", "Item " + x + " do tipo \"" + y.getType() + "\"");
 
-            if (y.getType() == "TextView") {
-                CONTENT.addView((TextView) y.getView());
+            if (y.getType() == "WebView") {
+                CONTENT.addView((WebView) y.getView());
             } else if (y.getType() == "ImageView") {
                 CONTENT.addView((ImageView) y.getView());
+            } else if (y.getType() == "TextView") {
+                CONTENT.addView((TextView) y.getView());
             }
         }
     }
@@ -182,11 +187,13 @@ public class WikiActivity extends Activity implements View.OnClickListener {
                 // texto normal (incluindo hiperlinks)
             } else {
                 //cria o elemento:
-                TextView txt = new TextView(this);
-                txt.setText(linhas[x]);
+                WebView txt = new WebView(this);
+                txt.getSettings().setJavaScriptEnabled(true);
+
+                txt.loadData(NetworkUtils.HTMLize(linhas[x]),"text/html","utf-8");
 
                 //adiciona a tela:
-                wikiList.add(quantidade_itens,new WikiItem("TextView",txt));
+                wikiList.add(quantidade_itens,new WikiItem("WebView",txt));
                 quantidade_itens++;
             }
         }
