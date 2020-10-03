@@ -42,10 +42,10 @@ public class WikiHelper {
     public static String internal(@Nullable String wikipage) {
         //previne erros (transforma null em "")
         if (wikipage == null) {
-            wikipage = "";
+            wikipage = "Página_principal";
         }
 
-        return Global.DOMAIN + "index.php?title=" + wikipage + "&feed=atom&action=raw";
+        return Global.DOMAIN + "index.php?title=" + wikipage + "&action=raw";
     }
 
     public static String internalJS(@Nullable String wikipage) {
@@ -68,30 +68,6 @@ public class WikiHelper {
 
         return page.exists();
     }
-
-    /**
-     * Tentativa falha de baixar o conteúdo da DP
-     *
-     * @TODO: Remover completamente do código (substituir por Linux.curl())
-     *
-     * @param url
-     * @return
-     */
-//    public static String load(String url) {
-//        try {
-//            Request request = new Request.Builder()
-//                    .url(url)
-//                    .build();
-//            Response response = Global.CLIENT.newCall(request).execute();
-//            while (!response.isSuccessful()) {
-//                // O NADA TB;
-//            }
-//            return response.body().string();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return Arrays.toString(e.getStackTrace());
-//        }
-//    }
 
     /**
      * baixa uma imagem e manda para o cache

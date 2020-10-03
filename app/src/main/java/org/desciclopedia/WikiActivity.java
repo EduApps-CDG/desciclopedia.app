@@ -1,5 +1,6 @@
 package org.desciclopedia;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,8 +19,13 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
 
+import org.desciclopedia.util.ImageUtils;
+import org.desciclopedia.util.JSUtils;
 import org.desciclopedia.util.Linux;
 import org.desciclopedia.util.NetworkUtils;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 import static org.desciclopedia.util.NetworkUtils.runOnNetworkThread;
 
@@ -54,6 +61,8 @@ public class WikiActivity extends Activity implements View.OnClickListener {
                 CONTENT.addView((ImageView) y.getView());
             } else if (y.getType() == "TextView") {
                 CONTENT.addView((TextView) y.getView());
+            } else if (y.getType() == "View") {
+                CONTENT.addView(y.getView());
             }
         }
     }
@@ -102,6 +111,7 @@ public class WikiActivity extends Activity implements View.OnClickListener {
      *
      * @param linhas
      */
+    @SuppressLint("JavascriptInterface")
     public void wikificar(String[] linhas) {
         for (int x = 0; x < (linhas.length - 1); x++) {
             System.out.println("Linha " + x + ":\n\n" + linhas[x]);
@@ -136,59 +146,151 @@ public class WikiActivity extends Activity implements View.OnClickListener {
             } else if (linhas[x].startsWith("[[Arquivo:") && linhas[x].endsWith("]]")) {
                 Log.i("DesBugger", linhas[x]);
 
+
+                ArrayList<String> urls = new ArrayList<String>();
+                final ArrayList<String> descs = new ArrayList<String>();
+
                 //pega os metadados da imagem (nome)
                 final String[] metadados = linhas[x].replace("[[Arquivo:","").replace("]]","").split("\\|");
+
                 final int y = quantidade_itens;
+                View v = getLayoutInflater().inflate(R.layout.image_slider, null);
+                final ImageView limg = v.findViewById(R.id.IMG);
+                ImageButton next = v.findViewById(R.id.IMG_NEXT);
+                ImageButton back = v.findViewById(R.id.IMG_BACK);
+                final TextView desc = v.findViewById(R.id.IMG_DESC);
 
-                //cria o elemento imagem
-                final ImageView img = new ImageView(self());
-                wikiList.add(y, new WikiItem("ImageView",img));
+                if (linhas[x+1].startsWith("[[Arquivo:")) {
+                    for (int z = x; z < linhas.length;z++) {
+                        final String[] metadados2 = linhas[z].replace("[[Arquivo:","").replace("]]","").split("\\|");
+                        System.out.println("imagem: " + metadados2[0]);
+                        urls.add(Global.DOMAIN + "wiki/Arquivo:" + metadados2[0]);
 
-                quantidade_itens++;
+                        for (int xxx = 0; xxx < metadados2.length;xxx++) {
+                            if (metadados2[xxx].contains(" ")&& xxx != 0) {
+                                descs.add(metadados2[xxx]);
+                            }
+                        }
 
+                        if (!linhas[z].startsWith("[[Arquivo:")) {
+                            z = linhas.length + 1;
+                        }
+                    }
 
-                runOnNetworkThread(new Runnable() {
+                } else {
+                    urls.add(Global.DOMAIN + "wiki/Arquivo:" + metadados[0]);
+                    ((ImageButton) v.findViewById(R.id.IMG_BACK)).setVisibility(View.GONE);
+                    ((ImageButton) v.findViewById(R.id.IMG_NEXT)).setVisibility(View.GONE);
+                }
+
+                String[] fiu = new String[urls.size()];
+                fiu = urls.toArray(fiu);
+                final ImageUtils iu = new ImageUtils(fiu);
+
+                next.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void run() {
-                        System.out.println("imagem " + metadados[0]);
-
-                        //baixa a página da desciclopéda contendo a imagem (Arquivo)
-                        String image_content = Linux.curl(null,"https://desciclopedia.org/wiki/Arquivo:" + metadados[0].replace(" ","_"));
-
-                        //baixa a imagem por meio da página baixada anteriormente (pois precisamos de um link estático com apenas a imagem)
-                        final Bitmap image = WikiHelper.loadImage(WikiHelper.getImageUrlByGambiarra(image_content));
-
-                        //volta para o processo principal e mostra a imagem
-                        runOnUiThread(new Runnable() {
-                            @Override public void run() {
-                                img.setImageBitmap(image);
+                    public void onClick(View view) {
+                        runOnNetworkThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                iu.next();
+                                try {
+                                    limg.setImageBitmap(iu.getActualImage());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                desc.setText(descs.get(iu.getX()));
                             }
                         });
                     }
                 });
+
+                back.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        runOnNetworkThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                iu.previous();
+                                try {
+                                    limg.setImageBitmap(iu.getActualImage());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                desc.setText(descs.get(iu.getX()));
+                            }
+                        });
+                    }
+                });
+
+                runOnNetworkThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            limg.setImageBitmap(iu.getImage(0));
+                            desc.setText(descs.get(iu.getX()));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+                wikiList.add(y, new WikiItem("View", v));
+
+                //cria o elemento imagem
+//                final ImageView img = limg;
+
+                quantidade_itens++;
+
+//                runOnNetworkThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        System.out.println("imagem " + metadados[0]);
+//
+//                        //baixa a página da desciclopéda contendo a imagem (Arquivo)
+//                        String image_content = Linux.curl(null,"https://desciclopedia.org/wiki/Arquivo:" + metadados[0].replace(" ","_"));
+//
+//                        //baixa a imagem por meio da página baixada anteriormente (pois precisamos de um link estático com apenas a imagem)
+//                        final Bitmap image = WikiHelper.loadImage(WikiHelper.getImageUrlByGambiarra(image_content));
+//
+//                        //volta para o processo principal e mostra a imagem
+//                        runOnUiThread(new Runnable() {
+//                            @Override public void run() {
+//                                img.setImageBitmap(image);
+//                            }
+//                        });
+//                    }
+//                });
 //
 //                if (metadados[1] == "thumb" | metadados[1] == "miniaturadaimagem") {
 //
 //                }
-
-                /**
-                 * <!--Comentários-->
-                 * @TODO: organizar melhor (não está funcionando direito)
-                 */
-            } else if (linhas[x].startsWith("<--")) {
-                //procura pelo final do comentário e ignora-o
-                for(int y = x;y < (linhas.length - 1);y++) {
-                    if (linhas[y].endsWith("-->")) {
-                        x = y;
-                        y = linhas.length;
-                    }
-                }
-
                 // texto normal (incluindo hiperlinks)
+                // {{porra}}
+            } else if (linhas[x].startsWith("{{") && linhas[x].endsWith("}}")) {
+//                runOnNetworkThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//
+//                    }
+//                });
+                //cria o elemento:
+                String pre = linhas[x].replaceFirst("\\{\\{","").replaceFirst("(?s)(.*)\\}\\}","");
+                String result = Linux.curl(null,WikiHelper.internal(pre));
+                WebView txt = new WebView(this);
+                txt.getSettings().setJavaScriptEnabled(true);
+                txt.addJavascriptInterface(new JSUtils(),"JSUtils");
+
+                txt.loadData(NetworkUtils.HTMLize(result),"text/html","utf-8");
+
+                //adiciona a tela:
+                wikiList.add(quantidade_itens,new WikiItem("WebView",txt));
+                quantidade_itens++;
             } else {
                 //cria o elemento:
                 WebView txt = new WebView(this);
                 txt.getSettings().setJavaScriptEnabled(true);
+                txt.addJavascriptInterface(new JSUtils(),"JSUtils");
 
                 txt.loadData(NetworkUtils.HTMLize(linhas[x]),"text/html","utf-8");
 

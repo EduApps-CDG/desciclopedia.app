@@ -1,6 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:padding="5dp">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+    <ImageButton
+        android:id="@+id/IMG_BACK"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_previous"
+        style="@style/TextAppearance.AppCompat.Widget.Button.Borderless.Colored"/>
+
+    <ImageView
+        android:id="@+id/IMG"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_weight="1"
+        android:maxHeight="500dp"/>
+
+    <ImageButton
+        android:id="@+id/IMG_NEXT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_next"
+        style="@style/TextAppearance.AppCompat.Widget.Button.Borderless.Colored"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/IMG_DESC"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:gravity="center"/>
 </LinearLayout>

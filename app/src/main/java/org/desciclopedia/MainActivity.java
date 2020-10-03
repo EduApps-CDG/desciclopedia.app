@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         runOnNetworkThread(new Runnable() {
             @Override
             public void run() {
-                Global.CONTENT = Linux.curl(null,WikiHelper.internal("Sexo_nasal"));
+                Global.CONTENT = Linux.curl(null,WikiHelper.internal("Sexo"));
 
                 System.out.println(Global.CONTENT);
 
